@@ -45,8 +45,11 @@ button, select, input, textarea{ font:inherit; color:inherit; }
 .top{ position:sticky; top:env(safe-area-inset-top, 0px); z-index:20; background:var(--paper); border-bottom:1px solid var(--rule); }
 .top-inner{ max-width:1180px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
 .brand{ display:flex; align-items:baseline; gap:12px; min-width:0; flex:1 1 auto; }
-.mark{ font-family:var(--font-script); font-weight:700; font-size:1.55rem; line-height:1; white-space:nowrap;
-  background:linear-gradient(176deg, transparent 0 30%, var(--hl) 30% 88%, transparent 88%); padding:0 .2em; color:var(--ink); }
+.mark{ display:inline-flex; align-items:center; gap:10px; font-family:var(--font-ui); font-weight:700; font-size:1.4rem; line-height:1; white-space:nowrap; color:var(--ink); letter-spacing:-.01em; }
+.mark svg{ width:30px; height:30px; flex:none; }
+.mark .pg{ fill:var(--surface); stroke:var(--ink); }
+.mark .ln{ stroke:var(--muted); }
+.mark .hlbar{ fill:var(--hl); }
 .script-name{ color:var(--muted); font-size:.92rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
 .tabs{ display:flex; gap:4px; overflow-x:auto; }
 .tabs button{ border:0; background:none; padding:8px 12px; border-radius:6px; cursor:pointer; color:var(--muted); white-space:nowrap; position:relative; }
@@ -191,6 +194,31 @@ mark.miss{ background:var(--miss-bg); color:var(--miss); text-decoration:underli
 .keys{ color:var(--muted); font-size:.82rem; margin-top:10px; }
 kbd{ font-family:var(--font-ui); border:1px solid var(--rule); border-bottom-width:2px; border-radius:4px; padding:0 .35em; background:var(--surface); }
 
+.cov{ margin-top:14px; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:12px 14px; font-size:.95rem; }
+.cov p{ margin:6px 0 0; }
+.cov .soft{ color:var(--muted); }
+.cov button{ margin-top:10px; font-size:.85rem; }
+.covbar{ height:8px; border-radius:4px; background:var(--rule); overflow:hidden; }
+.covbar i{ display:block; height:100%; background:var(--tape); }
+.voicetools{ margin-top:18px; }
+.tipbox{ background:var(--surface); border:1px solid var(--rule); border-left:4px solid var(--hl); border-radius:6px; padding:12px 16px; max-width:80ch; color:var(--ink); }
+.recsec{ margin-top:40px; padding-top:24px; border-top:1px solid var(--rule); }
+.recsec h2{ margin:0; font-size:1.3rem; }
+.recsec .soft{ color:var(--muted); font-weight:400; font-size:1rem; }
+.rectools{ display:flex; flex-wrap:wrap; gap:16px 24px; align-items:center; }
+.rectools select{ margin-left:8px; padding:6px 8px; border:1.5px solid var(--rule); border-radius:6px; background:var(--surface); font-family:var(--font-script); font-weight:700; }
+.chk{ display:flex; align-items:center; gap:8px; cursor:pointer; }
+.chk input{ width:18px; height:18px; accent-color:var(--tape); }
+.reccount{ color:var(--muted); margin:12px 0 8px; }
+.reclist{ list-style:none; margin:0; padding:0; background:var(--surface); border:1px solid var(--rule); border-radius:4px; }
+.reclist li{ display:flex; gap:12px; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--rule); }
+.reclist li:last-child{ border-bottom:0; }
+.reclist .rtext{ font-family:var(--font-script); flex:1; min-width:0; overflow-wrap:anywhere; }
+.reclist .ract{ display:flex; gap:6px; flex:none; }
+.reclist button{ border:1.5px solid var(--rule); background:var(--paper); padding:.4em .8em; border-radius:8px; cursor:pointer; font-size:.88rem; }
+.reclist button.recording{ background:var(--miss); color:#fff; border-color:var(--miss); }
+.reclist .has{ color:var(--ok); font-size:.85rem; white-space:nowrap; }
+@media (max-width:640px){ .reclist li{ flex-direction:column; align-items:stretch; } .reclist .ract{ justify-content:flex-end; } }
 /* notes */
 .notes-empty{ color:var(--muted); max-width:60ch; }
 .run-group{ margin-top:26px; }
@@ -212,7 +240,7 @@ kbd{ font-family:var(--font-ui); border:1px solid var(--rule); border-bottom-wid
 <body>
 <header class="top">
   <div class="top-inner">
-    <div class="brand"><span class="mark">Off Book</span><span class="script-name" id="scriptName"></span></div>
+    <div class="brand"><span class="mark"><svg viewBox="0 0 30 30" aria-hidden="true"><rect class="pg" x="5" y="2.5" width="20" height="25" rx="2.5" stroke-width="1.8"/><rect class="hlbar" x="8.5" y="11" width="13" height="5" rx="1"/><path class="ln" d="M9.5 7.5h11M9.5 13.5h11M9.5 19.5h11M9.5 23h7" stroke-width="1.6" stroke-linecap="round"/></svg>Off Book</span><span class="script-name" id="scriptName"></span></div>
     <nav class="tabs" role="tablist" aria-label="Sections">
       <button role="tab" data-tab="script" aria-selected="true">Script</button>
       <button role="tab" data-tab="cast" aria-selected="false">Voices</button>
@@ -276,11 +304,24 @@ kbd{ font-family:var(--font-ui); border:1px solid var(--rule); border-bottom-wid
       <button class="btn primary" data-goto="rehearse" type="button">Next: rehearse</button>
     </div>
     <p class="warn" id="noVoices" hidden>Your browser didn't offer any speaking voices. Try Chrome, Edge, or Safari.</p>
+    <div class="voicetools"><button class="btn primary" id="bestVoices" type="button">Pick the best voices for me</button></div>
+    <p class="tipbox" id="voiceTip"></p>
     <ul class="cast" id="castList"></ul>
     <div class="addchar">
       <label class="sr" for="newChar">New character name</label>
       <input type="text" id="newChar" placeholder="Add a character">
       <button class="btn" id="addCharBtn" type="button">Add</button>
+    </div>
+
+    <div class="recsec">
+      <h2>Real voices <span class="soft">(optional)</span></h2>
+      <p class="hint">You or a castmate can record a character's lines. During rehearsal, recorded lines play instead of the computer voice, and any line without a recording still uses the computer voice. Recordings stay in this browser on this device.</p>
+      <div class="rectools">
+        <label>Record lines for <select id="recChar"></select></label>
+        <label class="chk"><input type="checkbox" id="useRec"> Play recordings during rehearsal</label>
+      </div>
+      <p class="reccount" id="recCount"></p>
+      <ol class="reclist" id="recList"></ol>
     </div>
   </section>
 
@@ -299,7 +340,7 @@ kbd{ font-family:var(--font-ui); border:1px solid var(--rule); border-bottom-wid
         </div>
         <div class="field">
           <span class="lab">Read aloud</span>
-          <div class="seg" data-key="context"><button type="button" data-v="full">Whole scene</button><button type="button" data-v="cue">Just my cues</button></div>
+          <div class="seg" data-key="context"><button type="button" data-v="full">Whole scene</button><button type="button" data-v="cue">Just my cues</button><button type="button" data-v="drill">Random sections</button></div>
           <span class="sub" id="contextSub"></span>
         </div>
         <div class="field">
@@ -341,6 +382,15 @@ kbd{ font-family:var(--font-ui); border:1px solid var(--rule); border-bottom-wid
           <div class="seg" data-key="strict"><button type="button" data-v="1">Word perfect</button><button type="button" data-v="0.9">Close</button><button type="button" data-v="0.75">Loose</button></div>
           <span class="sub">Speech recognition mishears sometimes, so "Close" is a good default.</span>
         </div>
+        <div class="field" id="drillField">
+          <span class="lab">How many sections</span>
+          <div class="seg" data-key="drillN"><button type="button" data-v="3">3</button><button type="button" data-v="5">5</button><button type="button" data-v="10">10</button><button type="button" data-v="all">Until done</button></div>
+          <span class="lab" style="margin-top:12px">Lines per section</span>
+          <div class="seg" data-key="secLen"><button type="button" data-v="10">10</button><button type="button" data-v="20">20</button><button type="button" data-v="30">30</button></div>
+          <span class="lab" style="margin-top:12px">Time limit</span>
+          <div class="seg" data-key="timer"><button type="button" data-v="off">None</button><button type="button" data-v="10">10 min</button><button type="button" data-v="20">20 min</button><button type="button" data-v="30">30 min</button></div>
+          <span class="sub">Sections always start on someone else's line, so you get a cue. It remembers which of your lines you've done, so next time it picks sections you haven't covered. When time runs out, it finishes the section you're in first.</span>
+        </div>
         <div class="field">
           <span class="lab">Line notes</span>
           <div class="seg" data-key="feedback"><button type="button" data-v="end">At the end</button><button type="button" data-v="during">Right after the line</button></div>
@@ -379,7 +429,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 const state = {
   entries: [], chars: {}, narrator: { voice: '', pitch: 1 },
-  settings: { me: '', scene: 'all', context: 'full', dirs: 'on', rate: '1', display: 'first', turn: (SR || (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) ? 'mic' : 'tap', strict: '0.9', wait: '1.5', feedback: 'end', mono: 'follow', monoMin: '40' },
+  settings: { me: '', scene: 'all', context: 'full', dirs: 'on', rate: '1', display: 'first', turn: (SR || (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) ? 'mic' : 'tap', strict: '0.9', wait: '1.5', feedback: 'end', mono: 'follow', monoMin: '40', drillN: '5', secLen: '20', timer: 'off', useRec: 'on', recChar: '' },
   notes: [], nextId: 1, title: '', startAt: null
 };
 let tab = 'script';
@@ -447,7 +497,17 @@ function segments(text){
 }
 
 /* ---------- parsing ---------- */
-const STOP = new Set(['BLACKOUT','LIGHTS UP','LIGHTS DOWN','LIGHTS OUT','END OF PLAY','THE END','CURTAIN','END','INTERMISSION','END OF SCENE','END OF ACT','FADE OUT','FADE IN','CUT TO','CONTINUED','MORE','BLACK','DARKNESS','SILENCE','PAUSE','BEAT','CHARACTERS','CAST OF CHARACTERS','SETTING','TIME','PLACE','AT RISE','OK','NO','YES','WHAT','HEY','STOP','HELP','ALL']);
+const GROUP = /^(ALL|BOTH|EVERYONE|EVERYBODY|TOGETHER|CHORUS|ENSEMBLE|COMPANY|THE COMPANY|EVERYONE ELSE)$/;
+function speakerNames(s){ return String(s || '').split(/\s*(?:&|\/|,|\+|\bAND\b)\s*/i).map(x => x.trim()).filter(Boolean); }
+// A line is yours if it's your character's, a shared line that names you ("SYBIL & OTTO"), or a group line ("ALL").
+function isMine(e){
+  const me = state.settings.me;
+  if (!me || !e || e.type !== 'line') return false;
+  if (e.speaker === me) return true;
+  if (GROUP.test(e.speaker)) return true;
+  return speakerNames(e.speaker).includes(me);
+}
+const STOP = new Set(['BLACKOUT','LIGHTS UP','LIGHTS DOWN','LIGHTS OUT','END OF PLAY','THE END','CURTAIN','END','INTERMISSION','END OF SCENE','END OF ACT','FADE OUT','FADE IN','CUT TO','CONTINUED','MORE','BLACK','DARKNESS','SILENCE','PAUSE','BEAT','CHARACTERS','CAST OF CHARACTERS','SETTING','TIME','PLACE','AT RISE','OK','NO','YES','WHAT','HEY','STOP','HELP']);
 function isScene(t, inSpeech){
   if (inSpeech && t !== t.toUpperCase()) return false;
   const wc = t.split(/\s+/).length;
@@ -512,7 +572,7 @@ function parseScript(input){
 
   const out = [];
   let cur = null, speechX = null, speechPg = null, hold = [], afterBreak = false, prevBlank = true;
-  const push = (type, text, speaker) => { const e = { id: state.nextId++, type, text }; if (speaker) e.speaker = speaker; out.push(e); return e; };
+  const push = (type, text, speaker) => { const e = { id: state.nextId++, type, text }; if (speaker) e.speaker = speaker; if (rowPg != null) e.pg = rowPg; out.push(e); return e; };
   const xKnown = r => speechX != null && r.x != null && r.pg === speechPg;
   // A direction inside a run of dialogue lines (no blank line before it).
   const dirInSpeech = r => r.it || (xKnown(r) && r.x - speechX >= 30);
@@ -537,8 +597,10 @@ function parseScript(input){
     if (speechX == null && r.x != null){ speechX = r.x; speechPg = r.pg; }
   };
 
+  let rowPg = null;
   for (const r of rows){
     const t = r.t;
+    if (r.pg != null) rowPg = r.pg;
     if (!t){ if (cur) afterBreak = true; prevBlank = true; continue; }
     if (/^(page\s*)?\d{1,3}\.?$/i.test(t) || /^-\s*\d+\s*-$/.test(t)) continue;
     if (!r.it && isScene(t, !!(cur && cur.text))){ close(); push('scene', t); prevBlank = false; continue; }
@@ -595,7 +657,7 @@ async function pdfToText(buf){
   const pdfjs = window.pdfjsLib;
   pdfjs.GlobalWorkerOptions.workerSrc = base + 'pdf.worker.min.js';
   const doc = await pdfjs.getDocument({ data: buf, isEvalSupported: false }).promise;
-  const out = [];
+  const out = [], pages = [];
   for (let p = 1; p <= doc.numPages; p++){
     const page = await doc.getPage(p);
     // Loading the page's drawing instructions also loads its fonts, so italic text (usually stage directions) can be detected.
@@ -634,11 +696,30 @@ async function pdfToText(buf){
     });
     const gaps = rows.slice(1).map((r, k) => rows[k].y - r.y).filter(g => g > 0).sort((a, b) => a - b);
     const med = gaps.length ? gaps[Math.floor(gaps.length / 2)] : 14;
+    const pageOut = [];
     rows.forEach((r, k) => {
-      if (k && rows[k - 1].y - r.y > med * 1.55) out.push({ t: '' });
-      out.push(lines[k]);
+      if (k && rows[k - 1].y - r.y > med * 1.55) pageOut.push({ t: '' });
+      pageOut.push(lines[k]);
     });
-    out.push({ t: '' });
+    pages.push(pageOut);
+  }
+  // Running headers and footers (play title, author, page numbers) repeat at the top or bottom of many pages. Drop them.
+  const key = t => t.replace(/\d+/g, '#').replace(/\s+/g, ' ').trim().toLowerCase();
+  const edgeCount = new Map();
+  for (const pg of pages){
+    const real = pg.filter(r => r.t);
+    const seen = new Set([...real.slice(0, 2), ...real.slice(-2)].map(r => key(r.t)));
+    seen.forEach(k => edgeCount.set(k, (edgeCount.get(k) || 0) + 1));
+  }
+  const minRepeat = Math.max(3, Math.ceil(pages.length * 0.3));
+  for (const pg of pages){
+    const real = pg.filter(r => r.t);
+    const edges = new Set([...real.slice(0, 2), ...real.slice(-2)]);
+    for (const r of pg){
+      if (r.t && edges.has(r) && (edgeCount.get(key(r.t)) || 0) >= minRepeat) continue;
+      out.push(r);
+    }
+    // No blank line at a page break, so a speech that runs onto the next page stays one speech.
   }
   return out;
 }
@@ -694,7 +775,9 @@ function useText(text, title){
     entries = paras.map(x => /^[(\[].*[)\]]$/.test(x) ? { id: state.nextId++, type: 'dir', text: x } : { id: state.nextId++, type: 'line', speaker: 'YOU', text: x });
     solo = true;
   }
-  state.entries = entries; state.chars = {}; state.notes = []; state.title = title || 'Untitled script';
+  if (recDB.has.size) toast('Recordings from the previous script were removed.', 4000);
+  recClearAll();
+  state.entries = entries; state.chars = {}; state.notes = []; state.coverage = {}; state.title = title || 'Untitled script';
   state.startAt = null; state.settings.scene = 'all';
   syncChars();
   if (!state.settings.me || !state.chars[state.settings.me]) state.settings.me = '';
@@ -711,12 +794,27 @@ function useText(text, title){
 /* ---------- characters & voices ---------- */
 let voices = [];
 function loadVoices(){ voices = hasTTS ? speechSynthesis.getVoices() : []; ensureVoices(); if (tab === 'cast') renderCast(); }
+// Novelty and very old robotic voices that no one wants reading their scene partner.
+const NOVELTY = /^(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Pipe Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Deranged|Hysterical|Princess|Ralph|Fred|Junior|Kathy)\b/i;
+const BASIC = /^(Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley)\b/i;
+const GOOD_APPLE = /^(Samantha|Alex|Ava|Allison|Susan|Tom|Evan|Nathan|Zoe|Joelle|Noelle|Aaron|Nicky|Daniel|Karen|Moira|Tessa|Fiona|Serena|Kate|Oliver|Arthur|Martha|Jamie|Lee|Matilda|Isha|Rishi)\b/;
+function voiceTier(v){
+  const n = v.name || '';
+  if (/natural|neural|premium|enhanced/i.test(n)) return 0;
+  if (/^Google\b/i.test(n) || GOOD_APPLE.test(n)) return 1;
+  if (BASIC.test(n)) return 3;
+  return 2;
+}
+const TIER_LABEL = ['Most natural', 'Good', 'Standard', 'Basic'];
+function voiceLabel(v){
+  return (v.name || '').replace(/^Microsoft\s+/, '').replace(/\s*Online \(Natural\)/i, ' (natural)').replace(/\s*-\s*English.*$/i, '') + (v.lang ? ' · ' + v.lang : '');
+}
 function usableVoices(){
   const lang = (navigator.language || 'en').slice(0, 2).toLowerCase();
   let v = voices.filter(x => (x.lang || '').toLowerCase().startsWith(lang));
   if (!v.length) v = voices.slice();
-  const score = x => (/natural|premium|enhanced|neural|google/i.test(x.name) ? 0 : 1) + (x.localService ? 0 : 0.5);
-  return v.sort((a, b) => score(a) - score(b));
+  v = v.filter(x => !NOVELTY.test(x.name || ''));
+  return v.sort((a, b) => voiceTier(a) - voiceTier(b) || (a.name || '').localeCompare(b.name || ''));
 }
 const voiceByURI = u => voices.find(v => v.voiceURI === u) || null;
 function syncChars(){
@@ -739,21 +837,40 @@ function charsSorted(){
   const c = lineCounts();
   return Object.keys(state.chars).map(name => ({ name, n: c[name] || 0, ...state.chars[name] })).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name));
 }
+// Give each character its own voice, best quality first. Pitch only changes when two characters have to share a voice,
+// because shifting pitch makes natural voices sound worse.
 function ensureVoices(){
   const vs = usableVoices();
   const list = charsSorted();
-  list.forEach((c, k) => { if (state.chars[c.name].pitch == null) state.chars[c.name].pitch = PITCHES[k % PITCHES.length]; });
-  if (!vs.length) return;
-  const used = new Set(list.map(c => c.voice).filter(Boolean));
+  if (!vs.length){
+    list.forEach((c, k) => { if (state.chars[c.name].pitch == null) state.chars[c.name].pitch = PITCHES[k % PITCHES.length]; });
+    return;
+  }
+  const have = new Set(voices.map(v => v.voiceURI));
+  const good = vs.filter(v => voiceTier(v) <= 1);
+  const pool = good.length >= 2 ? good : vs;
+  const used = new Map();
+  list.forEach(c => { const ch = state.chars[c.name]; if (ch.voice && have.has(ch.voice)) used.set(ch.voice, (used.get(ch.voice) || 0) + 1); });
   for (const c of list){
-    if (state.chars[c.name].voice) continue;
-    const pick = vs.find(v => !used.has(v.voiceURI)) || vs[used.size % vs.length];
-    state.chars[c.name].voice = pick.voiceURI; used.add(pick.voiceURI);
+    const ch = state.chars[c.name];
+    if (ch.voice && have.has(ch.voice)){ if (ch.pitch == null) ch.pitch = 1; continue; }
+    let pick = pool.find(v => !used.has(v.voiceURI));
+    if (!pick) pick = pool.reduce((m, v) => (used.get(v.voiceURI) || 0) < (used.get(m.voiceURI) || 0) ? v : m, pool[0]);
+    const n = used.get(pick.voiceURI) || 0;
+    ch.voice = pick.voiceURI; ch.pitch = n ? PITCHES[n % PITCHES.length] : 1;
+    used.set(pick.voiceURI, n + 1);
   }
-  if (!state.narrator.voice){
-    const pick = vs.find(v => !used.has(v.voiceURI)) || vs[vs.length - 1];
-    state.narrator.voice = pick.voiceURI;
+  if (!state.narrator.voice || !have.has(state.narrator.voice)){
+    const pick = pool.find(v => !used.has(v.voiceURI)) || pool[pool.length - 1];
+    state.narrator.voice = pick.voiceURI; state.narrator.pitch = 1;
   }
+}
+function pickBestVoices(){
+  if (!usableVoices().length){ toast('No voices are available in this browser yet.'); return; }
+  for (const n in state.chars){ state.chars[n].voice = ''; state.chars[n].pitch = null; }
+  state.narrator.voice = '';
+  ensureVoices(); save(); renderCast();
+  toast('Each character now has the best voice available on this device.');
 }
 function renameChar(oldName, newName){
   newName = normName(newName);
@@ -765,6 +882,94 @@ function renameChar(oldName, newName){
   delete state.chars[oldName];
   if (state.settings.me === oldName) state.settings.me = newName;
   save(); renderAll();
+}
+
+/* ---------- recorded lines (stored in this browser) ---------- */
+const recDB = { db: null, has: new Set() };
+const reqp = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+function idb(){
+  if (recDB.db) return Promise.resolve(recDB.db);
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('offbook-recordings', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('rec');
+    r.onsuccess = () => { recDB.db = r.result; res(r.result); };
+    r.onerror = () => rej(r.error);
+  });
+}
+const recStore = mode => idb().then(db => db.transaction('rec', mode).objectStore('rec'));
+async function recPut(id, blob){ await reqp((await recStore('readwrite')).put(blob, id)); recDB.has.add(id); }
+async function recGet(id){ try { return await reqp((await recStore('readonly')).get(id)); } catch (x){ return null; } }
+async function recDel(id){ try { await reqp((await recStore('readwrite')).delete(id)); } catch (x){} recDB.has.delete(id); }
+async function recClearAll(){ try { await reqp((await recStore('readwrite')).clear()); } catch (x){} recDB.has.clear(); }
+async function recLoadKeys(){ try { (await reqp((await recStore('readonly')).getAllKeys())).forEach(k => recDB.has.add(k)); } catch (x){} }
+
+// One reusable audio player. Starting it inside a tap lets phones play recordings later without another tap.
+const player = new Audio();
+player.preload = 'auto';
+const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+function unlockPlayer(){ try { player.src = SILENT; const p = player.play(); if (p) p.catch(() => {}); } catch (x){} }
+async function playRecording(id, token){
+  const blob = await recGet(id);
+  if (!blob) return false;
+  if (token !== null && (token !== run.token || run.interrupted)) return true;
+  return new Promise(res => {
+    const url = URL.createObjectURL(blob);
+    let finished = false;
+    const done = () => { if (finished) return; finished = true; player.onended = player.onerror = player.onpause = null; URL.revokeObjectURL(url); res(true); };
+    player.onended = done; player.onerror = done; player.onpause = () => { if (!player.ended) done(); };
+    player.src = url;
+    player.playbackRate = parseFloat(state.settings.rate) || 1;
+    try { player.preservesPitch = true; } catch (x){}
+    const p = player.play(); if (p) p.catch(done);
+  });
+}
+
+let recording = null; // { id, mr, chunks, stream }
+async function startRecording(id){
+  if (recording) await stopRecording();
+  stop();
+  if (!window.MediaRecorder || !navigator.mediaDevices){ toast('This browser can\'t record audio.'); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    const mr = new MediaRecorder(stream);
+    const chunks = [];
+    mr.ondataavailable = ev => { if (ev.data && ev.data.size) chunks.push(ev.data); };
+    recording = { id, mr, chunks, stream };
+    mr.start();
+    renderRecPanel();
+  } catch (x){ toast('I couldn\'t use the microphone to record. Check that the browser is allowed to use it.'); }
+}
+function stopRecording(){
+  return new Promise(res => {
+    const r = recording; if (!r){ res(); return; }
+    r.mr.onstop = async () => {
+      r.stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(r.chunks, { type: r.mr.mimeType || 'audio/webm' });
+      recording = null;
+      if (blob.size > 800) await recPut(r.id, blob);
+      renderRecPanel();
+      res(r.id);
+    };
+    r.mr.stop();
+  });
+}
+function renderRecPanel(){
+  const sel = $('#recChar'); if (!sel) return;
+  const names = charsSorted().filter(c => c.n).map(c => c.name);
+  if (!state.settings.recChar || !names.includes(state.settings.recChar)) state.settings.recChar = names.find(n => n !== state.settings.me) || names[0] || '';
+  sel.innerHTML = names.map(n => `<option${n === state.settings.recChar ? ' selected' : ''}>${esc(n)}</option>`).join('');
+  $('#useRec').checked = state.settings.useRec !== 'off';
+  const lines = state.entries.filter(e => e.type === 'line' && e.speaker === state.settings.recChar && spokenText(e.text));
+  const done = lines.filter(e => recDB.has.has(e.id)).length;
+  $('#recCount').textContent = lines.length ? `${done} of ${lines.length} lines recorded.` : '';
+  $('#recList').innerHTML = lines.map(e => {
+    const isRec = recording && recording.id === e.id, has = recDB.has.has(e.id);
+    return `<li data-id="${e.id}"><div class="rtext">${esc(spokenText(e.text))}</div><div class="ract">
+      ${has && !isRec ? '<span class="has">Recorded</span>' : ''}
+      <button type="button" data-r="rec" class="${isRec ? 'recording' : ''}">${isRec ? 'Stop' : has ? 'Re-record' : 'Record'}</button>
+      ${has && !isRec ? '<button type="button" data-r="play">Play</button><button type="button" data-r="del">Delete</button>' : ''}
+    </div></li>`;
+  }).join('');
 }
 
 /* ---------- speech ---------- */
@@ -805,6 +1010,11 @@ function speak(text, who, token){
 }
 const narr = (text, token) => speak(text.replace(/^[(\[]|[)\]]$/g, ''), state.narrator, token);
 async function speakLine(e, token){
+  if (state.settings.useRec !== 'off' && recDB.has.has(e.id)){
+    run.lastSpoken = spokenText(e.text);
+    await playRecording(e.id, token);
+    return;
+  }
   const who = state.chars[e.speaker] || { pitch: 1 };
   const dirs = state.settings.dirs === 'on';
   for (const seg of segments(e.text)){
@@ -837,7 +1047,7 @@ function prevCue(k, floor){
     if (e.cut) continue;
     if (e.type === 'scene') return -1;
     if (e.type === 'line'){
-      if (e.speaker === state.settings.me) return -2;
+      if (isMine(e)) return -2;
       return spokenText(e.text) ? j : -1;
     }
   }
@@ -861,7 +1071,7 @@ function isLong(e){
   const sp = spokenText(e.text);
   return state.settings.mono !== 'off' && words(sp).length >= (parseInt(state.settings.monoMin) || 40);
 }
-function pushMine(steps, k){
+function pushMine(steps, k, drill){
   const e = state.entries[k];
   const sp = spokenText(e.text);
   if (!sp) return;
@@ -869,7 +1079,7 @@ function pushMine(steps, k){
   const ch = isLong(e) ? chunksOf(tokenize(sp).toks) : null;
   if (!ch || ch.length < 2){ steps.push({ kind: 'mine', i: k }); return; }
   const total = ch[ch.length - 1].to;
-  if (mode === 'follow'){ steps.push({ kind: 'mine', i: k, follow: true }); return; }
+  if (mode === 'follow' || drill){ steps.push({ kind: 'mine', i: k, follow: true }); return; }
   if (mode === 'build'){
     ch.forEach((c, n) => {
       steps.push({ kind: 'partSpeak', i: k, part: { from: c.from, to: c.to, build: true } });
@@ -896,13 +1106,13 @@ function buildSteps(){
       const e = state.entries[k];
       if (e.cut) continue;
       if (e.type === 'scene' || e.type === 'dir'){ if (dirs) steps.push({ kind: e.type, i: k }); }
-      else if (e.speaker === me) pushMine(steps, k);
+      else if (isMine(e)) pushMine(steps, k);
       else steps.push({ kind: 'speak', i: k });
     }
   } else {
     for (let k = from; k < b; k++){
       const e = state.entries[k];
-      if (e.cut || e.type !== 'line' || e.speaker !== me || !spokenText(e.text)) continue;
+      if (e.cut || !isMine(e) || !spokenText(e.text)) continue;
       const j = prevCue(k, a);
       if (j >= 0 && !(steps.length && steps[steps.length - 1].i === j)) steps.push({ kind: 'speak', i: j });
       pushMine(steps, k);
@@ -910,10 +1120,112 @@ function buildSteps(){
   }
   return steps;
 }
+// Random sections: jump to random stretches of the scene, long enough to know where you are.
+// It remembers which of your lines you've done and picks sections with lines you haven't.
+function drillSteps(){
+  const [a, b] = sceneRange();
+  const len = parseInt(state.settings.secLen) || 20;
+  const want = state.settings.drillN === 'all' ? Infinity : (parseInt(state.settings.drillN) || 5);
+  const dirs = state.settings.dirs === 'on';
+  const L = [];
+  for (let k = a; k < b; k++){ const e = state.entries[k]; if (!e.cut && e.type === 'line') L.push(k); }
+  const mineK = L.filter(k => isMine(state.entries[k]) && spokenText(state.entries[k].text));
+  if (!mineK.length) return [];
+  const cov = coveredSet();
+  let todo = new Set(mineK.filter(k => !cov.has(state.entries[k].id)));
+  let fresh = false;
+  if (!todo.size){ resetCoverage(); fresh = true; todo = new Set(mineK); }
+  const starts = [];
+  for (let p = 0; p < L.length; p++) if (p === 0 || !isMine(state.entries[L[p]])) starts.push(p); // start on a cue
+  const chosen = [];
+  while (chosen.length < want){
+    const cands = starts.filter(p => L.slice(p, Math.min(p + len, L.length)).some(k => todo.has(k)));
+    if (!cands.length) break;
+    const p = cands[Math.floor(Math.random() * cands.length)];
+    const q = Math.min(p + len, L.length) - 1;
+    chosen.push([p, q]);
+    for (let x = p; x <= q; x++) todo.delete(L[x]);
+  }
+  const steps = []; steps.sections = [];
+  chosen.forEach(([p, q], n) => {
+    const s0 = L[p], s1 = L[q] + 1;
+    steps.sections.push([s0, s1]);
+    let first = true;
+    for (let k = s0; k < s1; k++){
+      const e = state.entries[k];
+      if (e.cut) continue;
+      const before = steps.length;
+      if (e.type === 'scene' || e.type === 'dir'){ if (dirs) steps.push({ kind: e.type, i: k }); }
+      else if (isMine(e)) pushMine(steps, k, true);
+      else steps.push({ kind: 'speak', i: k });
+      for (let x = before; x < steps.length; x++){
+        steps[x].sec = n;
+        if (first){ steps[x].secStart = true; steps[x].secLabel = `Section ${n + 1} of ${chosen.length}`; first = false; }
+      }
+    }
+  });
+  steps.fresh = fresh;
+  return steps;
+}
+
+/* ---------- progress through random sections ---------- */
+function myLinesInScope(){
+  const [a, b] = sceneRange(), out = [];
+  for (let k = a; k < b; k++){ const e = state.entries[k]; if (!e.cut && isMine(e) && spokenText(e.text)) out.push(e); }
+  return out;
+}
+function coveredSet(){ const me = state.settings.me; return new Set((state.coverage && state.coverage[me]) || []); }
+function markCovered(id){
+  const me = state.settings.me; if (!me) return;
+  state.coverage = state.coverage || {};
+  const arr = state.coverage[me] || (state.coverage[me] = []);
+  if (!arr.includes(id)){ arr.push(id); save(); }
+}
+function resetCoverage(){
+  const me = state.settings.me; if (!me || !state.coverage) return;
+  const ids = new Set(myLinesInScope().map(e => e.id));
+  state.coverage[me] = (state.coverage[me] || []).filter(id => !ids.has(id));
+  save();
+}
+function sceneOf(e){
+  for (let j = state.entries.indexOf(e); j >= 0; j--) if (state.entries[j].type === 'scene') return state.entries[j].text;
+  return 'Opening';
+}
+function fmtPages(ps){
+  const u = [...new Set(ps)].sort((x, y) => x - y), r = [];
+  for (let i = 0; i < u.length; i++){ let j = i; while (j + 1 < u.length && u[j + 1] === u[j] + 1) j++; r.push(i === j ? `${u[i]}` : `${u[i]}–${u[j]}`); i = j; }
+  return (u.length > 1 ? 'pages ' : 'page ') + r.join(', ');
+}
+function coverageInfo(){
+  const mine = myLinesInScope(), cov = coveredSet();
+  const done = mine.filter(e => cov.has(e.id)), left = mine.filter(e => !cov.has(e.id));
+  const hasPg = mine.length > 0 && mine.every(e => e.pg != null);
+  const where = list => {
+    if (!list.length) return '';
+    if (hasPg) return fmtPages(list.map(e => e.pg));
+    const by = new Map(); list.forEach(e => { const s = sceneOf(e); by.set(s, (by.get(s) || 0) + 1); });
+    return [...by].map(([s, n]) => `${s} (${n} line${n > 1 ? 's' : ''})`).join(', ');
+  };
+  return { total: mine.length, done: done.length, pct: mine.length ? Math.round(done.length * 100 / mine.length) : 0, doneWhere: where(done), leftWhere: where(left) };
+}
+function covHTML(){
+  const c = coverageInfo(); if (!c.total) return '';
+  return `<div class="cov"><div class="covbar"><i style="width:${c.pct}%"></i></div>
+    <p><b>${c.done} of ${c.total}</b> of your lines covered (${c.pct}%).</p>
+    ${c.doneWhere ? `<p><span class="soft">Done:</span> ${esc(c.doneWhere)}</p>` : ''}
+    ${c.leftWhere ? `<p><span class="soft">Still to do:</span> ${esc(c.leftWhere)}</p>` : ''}
+    ${c.done ? '<button type="button" data-act="resetCov">Reset progress</button>' : ''}</div>`;
+}
+function timeLeftText(){
+  const ms = run.paused ? run.remaining : run.deadline - Date.now();
+  if (ms <= 0) return ', time\'s up, finishing this section';
+  const m = Math.floor(ms / 60000), s = Math.floor(ms / 1000) % 60;
+  return `, ${m}:${String(s).padStart(2, '0')} left`;
+}
 function stepsForIds(ids){
   const me = state.settings.me;
   const ks = [...new Set(ids.map(id => state.entries.findIndex(e => e.id === id)))]
-    .filter(k => k >= 0 && state.entries[k].speaker === me && !state.entries[k].cut).sort((x, y) => x - y);
+    .filter(k => k >= 0 && isMine(state.entries[k]) && !state.entries[k].cut).sort((x, y) => x - y);
   const steps = [];
   for (const k of ks){
     const j = prevCue(k, 0);
@@ -926,13 +1238,20 @@ function stepsForIds(ids){
 function start(steps, label){
   if (!state.settings.me){ toast('Pick who you\'re playing first.'); $('#setMe').focus(); return; }
   if (!hasTTS){ toast('This browser can\'t speak text aloud. Try Chrome, Edge, or Safari.'); return; }
+  if (!steps && state.settings.context === 'drill'){ steps = drillSteps(); label = 'Random sections'; }
   steps = steps || buildSteps();
   if (!steps.some(s => s.kind === 'mine')){ toast(state.settings.me + ' has no lines here. Pick another scene or character.'); return; }
   run.token++;
   speechSynthesis.cancel();
+  unlockPlayer();
   Object.assign(run, { steps, idx: 0, active: true, paused: false, interrupted: false, jump: null, turn: null, results: {}, revealed: {}, status: '', runId: Date.now(), label: label || sceneName(), lastSummary: '' });
   const is = steps.map(s => s.i);
   run.range = label ? [Math.min(...is), Math.max(...is) + 1] : null;
+  run.drill = label === 'Random sections';
+  run.sections = run.drill ? (steps.sections || null) : null;
+  run.timeUp = false; run.remaining = null;
+  run.deadline = run.drill && state.settings.timer && state.settings.timer !== 'off' ? Date.now() + (parseInt(state.settings.timer) || 10) * 60000 : null;
+  if (steps.fresh) toast('You\'ve covered all your lines here, so this starts a fresh round.', 5000);
   if (window.matchMedia('(max-width: 939px)').matches) $('#settingsBox').open = false;
   if (state.settings.turn === 'mic' && !micBlocked){ earsStart(); ensureMic(); }
   loop(run.token);
@@ -940,6 +1259,7 @@ function start(steps, label){
 function interrupt(){
   run.interrupted = true;
   if (hasTTS) speechSynthesis.cancel();
+  try { player.pause(); } catch (x) {}
   if (run.onInterrupt) run.onInterrupt();
 }
 function stop(){
@@ -950,10 +1270,11 @@ function stop(){
   if (run.resumeWaiter){ run.resumeWaiter(); run.resumeWaiter = null; }
   renderPrompter(); renderDock();
 }
-function pause(){ if (!run.active || run.paused) return; run.paused = true; interrupt(); earsStop(); renderDock(); }
+function pause(){ if (!run.active || run.paused) return; if (run.deadline) run.remaining = run.deadline - Date.now(); run.paused = true; interrupt(); earsStop(); renderDock(); }
 function resume(){
   if (!run.active || !run.paused) return;
   run.paused = false;
+  if (run.deadline && run.remaining != null) run.deadline = Date.now() + run.remaining;
   if (state.settings.turn === 'mic' && !micBlocked) earsStart();
   if (run.resumeWaiter){ const r = run.resumeWaiter; run.resumeWaiter = null; r(); }
   renderDock();
@@ -971,6 +1292,7 @@ async function loop(token){
     if (run.idx >= run.steps.length){ finishRun(); return; }
     run.interrupted = false;
     const step = run.steps[run.idx];
+    if (step.secStart && run.idx > 0 && run.deadline && !run.paused && Date.now() >= run.deadline){ run.timeUp = true; finishRun(); return; }
     renderPrompter();
     const r = await doStep(step, token);
     if (token !== run.token) return;
@@ -982,12 +1304,19 @@ async function loop(token){
   }
 }
 async function doStep(step, token){
+  if (step.secStart && run.idx > 0){
+    run.status = step.secLabel; renderDock();
+    await sleep(1200);
+    if (run.interrupted || token !== run.token) return 'interrupted';
+  }
   const e = state.entries[step.i];
   if (step.kind === 'scene' || step.kind === 'dir'){
     run.status = step.kind === 'scene' ? 'Scene heading' : 'Stage directions'; renderDock();
     run.lastSpoken = e.text;
     await narr(e.text, token);
   } else if (step.kind === 'speak'){
+    if (step.drill && run.idx > 0){ run.status = 'Next cue'; renderDock(); await sleep(700); if (run.interrupted || token !== run.token) return 'interrupted'; }
+    if (step.secStart){ run.status = step.secLabel; renderDock(); }
     run.status = e.speaker; renderDock();
     await speakLine(e, token);
   } else if (step.kind === 'partSpeak'){
@@ -1267,6 +1596,7 @@ function myTurn(step, token){
         res.heard = [prev.heard, res.heard].filter(Boolean).join(' … ');
       }
       run.results[step.i] = res;
+      if (run.drill) markCovered(e.id);
       if (!part || !part.build || part.last){
         const rv = run.revealed[step.i] || (run.revealed[step.i] = new Set());
         for (let x = from; x < to; x++) rv.add(x);
@@ -1313,7 +1643,8 @@ function finishRun(){
   const n = state.notes.filter(x => x.runId === run.runId).length;
   run.active = false; run.turn = null; run.status = '';
   earsStop();
-  run.lastSummary = n ? `Finished. ${n} line note${n > 1 ? 's' : ''}.` : 'Finished. Clean run, no line notes.';
+  run.lastSummary = (run.timeUp ? 'Time\'s up. ' : 'Finished. ') + (n ? `${n} line note${n > 1 ? 's' : ''}.` : 'Clean run, no line notes.');
+  run.deadline = null;
   renderPrompter(); renderDock(); renderNotes();
   if (n && state.settings.feedback === 'end') setTab('notes');
 }
@@ -1355,7 +1686,27 @@ function renderEntries(){
 /* ---------- rendering: cast ---------- */
 function voiceOptions(sel){
   const vs = usableVoices();
-  return '<option value="">Device default</option>' + vs.map(v => `<option value="${esc(v.voiceURI)}"${v.voiceURI === sel ? ' selected' : ''}>${esc(v.name)}${v.lang ? ' (' + esc(v.lang) + ')' : ''}</option>`).join('');
+  const groups = [[], [], [], []];
+  vs.forEach(v => groups[voiceTier(v)].push(v));
+  const opt = v => `<option value="${esc(v.voiceURI)}"${v.voiceURI === sel ? ' selected' : ''}>${esc(voiceLabel(v))}</option>`;
+  let html = '<option value="">Device default</option>';
+  groups.forEach((g, t) => { if (g.length) html += `<optgroup label="${TIER_LABEL[t]}">${g.map(opt).join('')}</optgroup>`; });
+  const cur = sel && !vs.some(v => v.voiceURI === sel) ? voiceByURI(sel) : null;
+  if (cur) html += `<optgroup label="Other">${opt(cur)}</optgroup>`;
+  return html;
+}
+function voiceTipHTML(){
+  const ua = navigator.userAgent;
+  const isEdge = /Edg\//.test(ua);
+  const isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isMac = !isIOS && /Macintosh/.test(ua);
+  const isSafari = /Safari\//.test(ua) && !/Chrome|Chromium|Edg\//.test(ua);
+  const best = usableVoices().filter(v => voiceTier(v) === 0).length;
+  const found = best ? `This browser has <b>${best}</b> of the most natural voices. ` : '';
+  if (isEdge) return found + (best ? 'Press <b>Pick the best voices for me</b> to use them.' : 'Edge\'s natural voices need an internet connection. Reload the page once you\'re online.');
+  if (isIOS) return found + 'For more natural voices on iPhone: open <b>Settings &gt; Accessibility &gt; Spoken Content &gt; Voices &gt; English</b>, download voices marked <b>Enhanced</b> or <b>Premium</b> (Ava, Zoe, Evan, and Nathan are good), then reload this page and press <b>Pick the best voices for me</b>.';
+  if (isMac) return found + 'For more natural voices on a Mac: open <b>System Settings &gt; Accessibility &gt; Spoken Content</b>, click the <b>System voice</b> menu, choose <b>Manage Voices</b>, and download voices marked <b>Enhanced</b> or <b>Premium</b>. Then reload this page.' + (isSafari ? '' : ' Safari shows these voices most reliably. Microsoft Edge also has its own natural voices.');
+  return found + 'For the most natural free voices, open this page in <b>Microsoft Edge</b>, which includes dozens of natural-sounding voices.';
 }
 function renderCast(){
   ensureVoices();
@@ -1377,12 +1728,14 @@ function renderCast(){
       <button type="button" data-role="preview">Preview</button>
     </li>`);
   $('#castList').innerHTML = rows.join('');
+  $('#voiceTip').innerHTML = voiceTipHTML();
+  renderRecPanel();
 }
 
 /* ---------- rendering: rehearse ---------- */
 function renderSettings(){
   const s = state.settings;
-  const names = charsSorted().filter(c => c.n).map(c => c.name);
+  const names = charsSorted().filter(c => c.n && !GROUP.test(c.name) && speakerNames(c.name).length === 1).map(c => c.name);
   $('#setMe').innerHTML = '<option value="">Choose a character</option>' + names.map(n => `<option${n === s.me ? ' selected' : ''}>${esc(n)}</option>`).join('');
   const scenes = state.entries.filter(e => e.type === 'scene');
   if (s.scene !== 'all' && !scenes.some(e => String(e.id) === String(s.scene))) s.scene = 'all';
@@ -1403,7 +1756,8 @@ function renderSettings(){
     : 'Say your line, then tap Done, or tap "I missed it" to log a note.';
   $('#strictField').hidden = s.turn !== 'mic' || !SR || srBroken;
   $('#waitField').hidden = s.turn !== 'mic';
-  $('#contextSub').textContent = s.context === 'cue' ? 'Only the line right before each of yours is read.' : 'Every line in the scene is read, with pauses for yours.';
+  $('#contextSub').textContent = s.context === 'drill' ? 'Jumps to random stretches of the scene in random order. Each one is long enough that you know where you are.' : s.context === 'cue' ? 'Only the line right before each of yours is read.' : 'Every line in the scene is read, with pauses for yours.';
+  $('#drillField').hidden = s.context !== 'drill';
   $('#monoSub').textContent = ({
     off: 'Long speeches are treated like any other line.',
     follow: 'Pauses won\'t end your speech. If you stall, I feed you the next few words from where you stopped.' + (s.turn === 'mic' ? '' : ' This needs "Listen to me" to track where you are.'),
@@ -1466,13 +1820,19 @@ function lineHTML(e, k, mine){
 function renderPrompter(){
   const P = $('#prompter');
   if (!state.entries.length){ P.innerHTML = '<p class="empty-stage">Load a script on the Script tab to start rehearsing.</p>'; return; }
-  const [a, b] = run.active && run.range ? run.range : sceneRange();
+  let [a, b] = run.active && run.range ? run.range : sceneRange();
+  let only = null;
+  if (run.active && run.drill && run.sections){
+    const st = run.steps[run.idx] || run.steps[run.steps.length - 1];
+    if (run.sections[st.sec]) [a, b] = run.sections[st.sec];
+  }
   const me = state.settings.me;
   const cur = run.active ? run.steps[run.idx] : null;
   const curI = cur ? cur.i : -1;
   const stepSet = run.active ? new Set(run.steps.map(s => s.i)) : null;
   let html = '';
   for (let k = a; k < b; k++){
+    if (only && !only.has(k)) continue;
     const e = state.entries[k];
     const cls = [e.type];
     if (k === curI) cls.push('current');
@@ -1482,7 +1842,7 @@ function renderPrompter(){
     if (e.type === 'scene') html += `<li class="${cls.join(' ')}" data-id="${e.id}"><h3>${esc(e.text)}</h3></li>`;
     else if (e.type === 'dir') html += `<li class="${cls.join(' ')}" data-id="${e.id}"><p class="dirtext">${esc(e.text)}</p></li>`;
     else {
-      const mine = e.speaker === me;
+      const mine = isMine(e);
       const color = (state.chars[e.speaker] || {}).color || 'var(--ink)';
       html += `<li class="${cls.join(' ')}" data-id="${e.id}"><div class="who" style="--c:${color}">${esc(e.speaker)}${mine ? ' <span class="paren">(you)</span>' : ''}</div><div class="said">${lineHTML(e, k, mine)}</div>${run.turn && run.turn.i === k && state.settings.turn === 'mic' ? '<div class="heard" id="heard"></div>' : ''}</li>`;
     }
@@ -1507,11 +1867,12 @@ function renderDock(){
     const status = run.lastSummary || (state.settings.me ? `Ready. Tap any line to start from there.` : 'Choose who you\'re playing to start.');
     d.innerHTML = `<div class="status">${esc(status)}</div>
       <div class="btns">
-        <button type="button" class="primary big" data-act="start">${state.startAt != null ? 'Start from marked line' : 'Start'}</button>
-        ${state.startAt != null ? '<button type="button" data-act="clearStart">Start from the top</button>' : ''}
+        <button type="button" class="primary big" data-act="start">${state.settings.context === 'drill' ? (coverageInfo().done ? 'Continue random sections' : 'Start random sections') : state.startAt != null ? 'Start from marked line' : 'Start'}</button>
+        ${state.startAt != null && state.settings.context !== 'drill' ? '<button type="button" data-act="clearStart">Start from the top</button>' : ''}
         <span class="spacer"></span><button type="button" data-act="editScript">Edit script</button>
         ${run.lastSummary && state.notes.some(n => n.runId === run.runId) ? '<button type="button" data-act="seeNotes">See notes</button><button type="button" data-act="runMissed">Run my missed lines</button>' : ''}
       </div>
+      ${state.settings.context === 'drill' && state.settings.me ? covHTML() : ''}
       <p class="keys"><kbd>Space</kbd> start or pause, <kbd>L</kbd> line, <kbd>Enter</kbd> done</p>`;
     return;
   }
@@ -1522,8 +1883,8 @@ function renderDock(){
     if (t.prompting) status = 'Line…';
     else if (state.settings.turn === 'mic' && !micBlocked){ const on = t.vadOn || (t.listening && !srBroken); status = on ? 'Your line. Listening…' + (t.vadOn ? ' <span class="meter" aria-hidden="true"><i id="meter"></i></span>' : '') : 'Your line'; if (on) cls += ' listening'; }
     else status = 'Your line. Say it, then tap Done.';
-  } else status = run.status ? (run.status === 'Line note' ? 'Line note' : esc(run.status) + ' <span class="soft">reading</span>') : '';
-  const step = `<span class="soft">${run.idx + 1} of ${run.steps.length}</span>`;
+  } else status = run.status ? (run.status === 'Line note' || /^Section/.test(run.status) ? esc(run.status) : esc(run.status) + ' <span class="soft">reading</span>') : '';
+  const step = `<span class="soft">${run.idx + 1} of ${run.steps.length}</span>` + (run.deadline ? `<span class="soft" id="timeLeft">${timeLeftText()}</span>` : '');
   d.innerHTML = `<div class="${cls}">${status} ${step}</div>
     <div class="btns">
       ${t && !run.paused ? `<button type="button" class="linebtn big" data-act="line">Line!</button><button type="button" class="primary big" data-act="done">Done</button>${state.settings.turn === 'tap' || micBlocked ? '<button type="button" data-act="missed">I missed it</button>' : ''}` : ''}
@@ -1806,6 +2167,22 @@ $('#castList').addEventListener('change', ev => {
   if (role === 'pitch') target.pitch = parseFloat(ev.target.value);
   save();
 });
+$('#bestVoices').addEventListener('click', pickBestVoices);
+$('#recChar').addEventListener('change', ev => { state.settings.recChar = ev.target.value; save(); renderRecPanel(); });
+$('#useRec').addEventListener('change', ev => { state.settings.useRec = ev.target.checked ? 'on' : 'off'; save(); });
+$('#recList').addEventListener('click', async ev => {
+  const b = ev.target.closest('button[data-r]'); if (!b) return;
+  const li = b.closest('li'), id = +li.dataset.id;
+  if (b.dataset.r === 'rec'){
+    if (recording && recording.id === id){
+      await stopRecording();
+      // Move straight on to the next line so a castmate can record a whole part quickly.
+      const next = $(`#recList li[data-id="${id}"]`)?.nextElementSibling?.querySelector('button[data-r="rec"]');
+      if (next){ next.focus(); next.closest('li').scrollIntoView({ block: 'nearest' }); }
+    } else startRecording(id);
+  } else if (b.dataset.r === 'play'){ stop(); unlockPlayer(); playRecording(id, null); }
+  else if (b.dataset.r === 'del'){ await recDel(id); renderRecPanel(); }
+});
 $('#castList').addEventListener('click', ev => {
   const b = ev.target.closest('[data-role="preview"]'); if (!b || !hasTTS) return;
   const name = b.closest('li').dataset.name;
@@ -1862,10 +2239,17 @@ $('#dock').addEventListener('click', ev => {
   else if (a === 'stop'){ stop(); run.lastSummary = ''; renderDock(); }
   else if (a === 'seeNotes') setTab('notes');
   else if (a === 'editScript') openEditorAt(state.startAt);
+  else if (a === 'drill'){
+    if (!state.settings.me){ toast('Pick who you\'re playing first.'); return; }
+    const st = drillSteps();
+    if (!st.length){ toast('There are no cues for ' + state.settings.me + ' in this scene. Try "Whole script".'); return; }
+    start(st, 'Cue drill');
+  }
+  else if (a === 'resetCov'){ resetCoverage(); run.lastSummary = ''; renderDock(); }
   else if (a === 'runMissed') runNoteLines(state.notes.filter(n => n.runId === run.runId));
 });
 function runNoteLines(notes){
-  const mine = notes.filter(n => n.speaker === state.settings.me);
+  const mine = notes.filter(n => { const e = state.entries.find(x => x.id === n.entryId); return e && isMine(e); });
   if (!mine.length){ toast('None of these notes are for ' + (state.settings.me || 'your character') + '.'); return; }
   const steps = stepsForIds(mine.map(n => n.entryId));
   if (!steps.length){ toast('Those lines aren\'t in the current script anymore.'); return; }
@@ -1958,8 +2342,13 @@ DESMOND
 All of it. We owe the bank a thank-you note.`;
 
 /* ---------- init ---------- */
+setInterval(() => {
+  const el = document.getElementById('timeLeft');
+  if (el && run.active && run.deadline) el.textContent = timeLeftText();
+}, 1000);
 restore();
 if (hasTTS){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+recLoadKeys().then(() => { if (tab === 'cast') renderRecPanel(); });
 if (state.entries.length){ syncChars(); showReview(); renderAll(); setTab(state.settings.me ? 'rehearse' : 'script'); }
 else { renderAll(); }
 </script>
